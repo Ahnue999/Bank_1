@@ -2,6 +2,7 @@
 #include <fstream>
 #include <vector>
 #include <iomanip>
+#include <string.h>
 using namespace std;
 
 const string FileName = "Client.txt";
@@ -70,6 +71,7 @@ vector<stData> LoadFileToVector (string FileName) {
 
 
 void PrintMainMenu() {
+    system ("cls");
     cout << "========================================================================\n";
     cout << "\t\t\t   Main Menu Screen \n";
     cout << "========================================================================\n";
@@ -84,6 +86,7 @@ void PrintMainMenu() {
 }
 
 void PrintClients(vector<stData> Data) {
+    system ("cls");
     cout << "                          Client list (" << Data.size() << ") Client(s): " << endl;
     cout << "________________________________________________________________________________________________\n";
     cout << "|" << setw(20) << left << "Account Number" << "|" << setw(12) << "Pin Code" << "|" << setw(34) << "Client Name" << "|" << setw(18) << "Phone Number" << "|" << setw(12) << "Balance" << endl;
@@ -102,11 +105,11 @@ string ReadString(string Massage)
     return TheString;
 }
 
-stData FillClientData() {
+stData FillClientData(string ID) {
     stData Data;
-    cout << "Enter Your Account Number : ";
-    getline(cin >> ws, Data.AccountNumber);
-    Data.PINCode = ReadString("Enter Your PIN Code : ");
+    Data.AccountNumber = ID;
+    cout << "Enter Your PIN Code : ";
+    getline(cin >> ws, Data.PINCode);
     Data.Name = ReadString("Enter Your Name : ");
     Data.Phone = ReadString("Enter Your Phone Number: ");
     Data.AccountBalance = stod(ReadString("Enter Your Account Balance : "));
@@ -137,25 +140,6 @@ void ClientToFile(string FileName, string Line) {
     
 }
 
-void AddNewClient() {
-    stData ClientData;
-    ClientData = FillClientData();
-    ClientToFile(FileName, ConvertRecordToLine(ClientData));
-}
-void AddClients () {
-    char Answer = 'Y';
-    do {
-        system ("cls");
-        cout << "Adding new clients : \n\n";
-        
-        AddNewClient();
-
-        cout << "Added succefully!!\nDo You Want to Add More Clients ? [y/n]  \n";
-        cin >> Answer;
-    } while (toupper(Answer) == 'Y');
-    cout << "\n All clients were added to the file [" << FileName << "]";
-}
-
 bool SearchClient(string ID, vector<stData> Clients, stData& Client) {
     for (stData &C : Clients) {
         if (C.AccountNumber == ID) {
@@ -166,12 +150,41 @@ bool SearchClient(string ID, vector<stData> Clients, stData& Client) {
     return false;
 }
 
+void AddNewClient(string ID) {
+    stData ClientData;
+    ClientData = FillClientData(ID);
+    ClientToFile(FileName, ConvertRecordToLine(ClientData));
+}
+void AddClients (vector<stData> Clients, stData Client) {
+    char Answer = 'Y';
+    string ID = "";
+    do {
+        cout << "enter the ID you want to add";
+        cin >> ID;
+        system ("cls");
+        if (!SearchClient(ID, Clients, Client)) {
+        cout << "Adding new clients : \n\n";
+        
+        AddNewClient(ID);
+
+        cout << "Added succefully!!\n";
+        }
+        else cout << "This ID is taken\n";
+        cout << "\nDo You Want to Add More Clients ? [y/n]  \n";
+        cin >> Answer;
+    } while (toupper(Answer) == 'Y');
+    cout << "\n All clients were added to the file [" << FileName << "]";
+}
+
+
 void PrintRecord (stData Data) {
+    cout << "\n-----------------------------------------\n";
     cout << "Account Numer : " << Data.AccountNumber << endl;
     cout << "PIN Code : " << Data.PINCode << endl;
     cout << "Name : " << Data.Name << endl;
     cout << "Phone : " << Data.Phone << endl;
     cout << "Account Balance : " << Data.AccountBalance << endl;
+    cout << "\n-----------------------------------------\n";
 }
 
 void MarkClientForDeletion(string ID, vector<stData> &Clients) {
@@ -260,7 +273,12 @@ bool UpdateClientByID(vector<stData> &Clients, string ID) {
 void VersatileFunc(int n) {
     string ID;
     vector<stData> Vector = LoadFileToVector(FileName);
+    stData Client;
     switch (n) {
+        case Add: {
+            AddClients(Vector, Client);
+            break;
+        }
         case Delete: {
             cout << "What ID do you want to delete? \n";
             cin >> ID;
@@ -274,61 +292,59 @@ void VersatileFunc(int n) {
             break;
         }
         case Find: {
-            cout << "Enter the ID you want to find";
+            cout << "Enter the ID you want to find? \n";
             cin >> ID;
-            stData Client;
-            if (SearchClient(ID, Vector, Client))
-            {
+            if (SearchClient(ID, Vector, Client)) {
             PrintRecord(Client);
             }
-    else {
-        cout << "This ID wasn't found\n";
-    }
+            else {
+            cout << "This ID wasn't found\n";
+            }
+            break;
         }
-        default: cout << "Miss!Miss!";
+        default: cout << "MissMiss\n";
     }
 }
 
+void PressToContinue() {
+            cout << "\nPress Enter To Continue...\n";
+            system("pause>0");
+}
 
-
-
-void Functions() {
+void Functions(int &still) {
     int Ans;
     cin >> Ans;
     
     switch(Ans) {
         case Show: {
             PrintClients(LoadFileToVector(FileName));
-            cout << "\nPress Enter To Continue...\n";
-            system("pause>0");
+            PressToContinue();
             break;
         }
         case Add: {
-            AddClients();
-            cout << "\nPress Enter To Continue...\n";
-            system("pause>0");
+            VersatileFunc(Add);
+            PressToContinue();
             break;
         }
         case Delete: {
             VersatileFunc(Delete);
-            cout << "\nPress Enter To Continue...\n";
-            system("pause>0");
+            PressToContinue();
             break;
         }
         case Update: {
             VersatileFunc(Update);
-            cout << "\nPress Enter To Continue...\n";
-            system("pause>0");
+            PressToContinue();
             break;
         }
         case Find: {
             VersatileFunc(Find);
-            cout << "\nPress Enter To Continue...\n";
-            system("pause>0");
+            PressToContinue();
             break;
         }
         case Exit: {
-
+            still = Exit;
+            cout << "\n HAVE A NICE DAY~! \n";
+            cout << "\n\n Exitting ... \n\n";
             break;
         }
         default: {
@@ -338,9 +354,12 @@ void Functions() {
 }
 void StartBank() {
 
-    PrintMainMenu();
-    Functions();
-
+    int still;
+    do {
+            PrintMainMenu();
+            Functions(still);
+    }
+    while (still != Exit);
 }
 
 int main() {
