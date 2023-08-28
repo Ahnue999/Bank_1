@@ -92,12 +92,12 @@ void PrintMainMenu() {
 void PrintClients(vector<stData> Data) {
     system ("cls");
     cout << "                          Client list (" << Data.size() << ") Client(s): " << endl;
-    cout << "________________________________________________________________________________________________\n";
-    cout << "|" << setw(20) << left << "Account Number" << "|" << setw(12) << "Pin Code" << "|" << setw(34) << "Client Name" << "|" << setw(18) << "Phone Number" << "|" << setw(12) << "Balance" << endl;
-    cout << "________________________________________________________________________________________________\n";
+    cout << "_______________________________________________________________________________________________________\n";
+    cout << "| " << setw(20) << left << "Account Number" << "| " << setw(12) << "Pin Code" << "| " << setw(34) << "Client Name" << "| " << setw(18) << "Phone Number" << "| " << setw(12) << "Balance";
+    cout << "\n_______________________________________________________________________________________________________\n";
 
     for (stData &Record : Data) {
-        cout <<  "|" << setw(20) << Record.AccountNumber <<  "|" << setw(12) << Record.PINCode << "|" << setw(34) << Record.Name << "|" << setw(18) << Record.Phone << "|" << setw(12) << Record.AccountBalance << endl;
+        cout <<  "| " << setw(20) << Record.AccountNumber <<  "| " << setw(12) << Record.PINCode << "| " << setw(34) << Record.Name << "| " << setw(18) << Record.Phone << "| " << setw(12) << Record.AccountBalance << endl;
     }
 }
 
@@ -164,7 +164,8 @@ void AddClients (vector<stData> Clients) {
     char Answer = 'Y';
     string ID = "";
     do {
-        cout << "enter the ID you want to add";
+        system("cls");
+        cout << "Enter the ID you want to add\n";
         cin >> ID;
         system ("cls");
         if (!SearchClient(ID, Clients, Client)) {
@@ -347,19 +348,8 @@ void Functions() {
         }
     }
 }
-<<<<<<< HEAD
-
-void StartBank() {
-    int still;
-    do {
-        PrintMainMenu();
-        Functions(still);
-    }
-    while (still != Exit);
-=======
 void StartBank() {
     PrintMainMenu();
->>>>>>> trial_1
 }
 
 int main() {
