@@ -299,7 +299,6 @@ void FindClient(vector<stData> Clients) {
 void Functions(int &still) {
     int Ans;
     cin >> Ans;
-    string ID;
     vector<stData> Clients = LoadFileToVector(FileName);
     
     switch(Ans) {
@@ -339,8 +338,8 @@ void Functions(int &still) {
         }
     }
 }
-void StartBank() {
 
+void StartBank() {
     int still;
     do {
         PrintMainMenu();
