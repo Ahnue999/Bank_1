@@ -5,6 +5,9 @@
 #include <string.h>
 using namespace std;
 
+void PrintMainMenu();
+void Functions();
+
 const string FileName = "Client.txt";
 
 enum Func { Show = 1, Add, Delete, Update, Find, Exit};
@@ -83,6 +86,7 @@ void PrintMainMenu() {
     cout << "\t [6] Exit.\n";
     cout << "========================================================================\n";
     cout << "Choose what do you want to do? [1 to 6] ?\n";
+    Functions();
 }
 
 void PrintClients(vector<stData> Data) {
@@ -281,6 +285,7 @@ bool UpdateClientByID(vector<stData> &Clients) {
 void PressToContinue() {
             cout << "\nPress Enter To Continue...\n";
             system("pause>0");
+            PrintMainMenu();
 }
 
 void FindClient(vector<stData> Clients) {
@@ -296,7 +301,7 @@ void FindClient(vector<stData> Clients) {
     }
 }
 
-void Functions(int &still) {
+void Functions() {
     int Ans;
     cin >> Ans;
     vector<stData> Clients = LoadFileToVector(FileName);
@@ -308,27 +313,31 @@ void Functions(int &still) {
             break;
         }
         case Add: {
+            system("cls");
             AddClients(Clients);
             PressToContinue();
             break;
         }
         case Delete: {
+            system("cls");
             DeleteClientByID(Clients);
             PressToContinue();
             break;
         }
         case Update: {
+            system("cls");
             UpdateClientByID(Clients);
             PressToContinue();
             break;
         }
         case Find: {
+            system("cls");
             FindClient(Clients);
             PressToContinue();
             break;
         }
         case Exit: {
-            still = Exit;
+            system("cls");
             cout << "\n HAVE A NICE DAY~! \n";
             cout << "\n\n Exitting ... \n\n";
             break;
@@ -338,6 +347,7 @@ void Functions(int &still) {
         }
     }
 }
+<<<<<<< HEAD
 
 void StartBank() {
     int still;
@@ -346,6 +356,10 @@ void StartBank() {
         Functions(still);
     }
     while (still != Exit);
+=======
+void StartBank() {
+    PrintMainMenu();
+>>>>>>> trial_1
 }
 
 int main() {
