@@ -2,7 +2,11 @@
 #include <fstream>
 #include <vector>
 #include <iomanip>
+#include <string.h>
 using namespace std;
+
+void PrintMainMenu();
+void Functions();
 
 const string FileName = "Client.txt";
 
@@ -70,6 +74,7 @@ vector<stData> LoadFileToVector (string FileName) {
 
 
 void PrintMainMenu() {
+    system ("cls");
     cout << "========================================================================\n";
     cout << "\t\t\t   Main Menu Screen \n";
     cout << "========================================================================\n";
@@ -81,16 +86,18 @@ void PrintMainMenu() {
     cout << "\t [6] Exit.\n";
     cout << "========================================================================\n";
     cout << "Choose what do you want to do? [1 to 6] ?\n";
+    Functions();
 }
 
 void PrintClients(vector<stData> Data) {
+    system ("cls");
     cout << "                          Client list (" << Data.size() << ") Client(s): " << endl;
-    cout << "________________________________________________________________________________________________\n";
-    cout << "|" << setw(20) << left << "Account Number" << "|" << setw(12) << "Pin Code" << "|" << setw(34) << "Client Name" << "|" << setw(18) << "Phone Number" << "|" << setw(12) << "Balance" << endl;
-    cout << "________________________________________________________________________________________________\n";
+    cout << "_______________________________________________________________________________________________________\n";
+    cout << "| " << setw(20) << left << "Account Number" << "| " << setw(12) << "Pin Code" << "| " << setw(34) << "Client Name" << "| " << setw(18) << "Phone Number" << "| " << setw(12) << "Balance";
+    cout << "\n_______________________________________________________________________________________________________\n";
 
     for (stData &Record : Data) {
-        cout <<  "|" << setw(20) << Record.AccountNumber <<  "|" << setw(12) << Record.PINCode << "|" << setw(34) << Record.Name << "|" << setw(18) << Record.Phone << "|" << setw(12) << Record.AccountBalance << endl;
+        cout <<  "| " << setw(20) << Record.AccountNumber <<  "| " << setw(12) << Record.PINCode << "| " << setw(34) << Record.Name << "| " << setw(18) << Record.Phone << "| " << setw(12) << Record.AccountBalance << endl;
     }
 }
 
@@ -102,11 +109,11 @@ string ReadString(string Massage)
     return TheString;
 }
 
-stData FillClientData() {
+stData FillClientData(string ID) {
     stData Data;
-    cout << "Enter Your Account Number : ";
-    getline(cin >> ws, Data.AccountNumber);
-    Data.PINCode = ReadString("Enter Your PIN Code : ");
+    Data.AccountNumber = ID;
+    cout << "Enter Your PIN Code : ";
+    getline(cin >> ws, Data.PINCode);
     Data.Name = ReadString("Enter Your Name : ");
     Data.Phone = ReadString("Enter Your Phone Number: ");
     Data.AccountBalance = stod(ReadString("Enter Your Account Balance : "));
@@ -137,25 +144,6 @@ void ClientToFile(string FileName, string Line) {
     
 }
 
-void AddNewClient() {
-    stData ClientData;
-    ClientData = FillClientData();
-    ClientToFile(FileName, ConvertRecordToLine(ClientData));
-}
-void AddClients () {
-    char Answer = 'Y';
-    do {
-        system ("cls");
-        cout << "Adding new clients : \n\n";
-        
-        AddNewClient();
-
-        cout << "Added succefully!!\nDo You Want to Add More Clients ? [y/n]  \n";
-        cin >> Answer;
-    } while (toupper(Answer) == 'Y');
-    cout << "\n All clients were added to the file [" << FileName << "]";
-}
-
 bool SearchClient(string ID, vector<stData> Clients, stData& Client) {
     for (stData &C : Clients) {
         if (C.AccountNumber == ID) {
@@ -166,12 +154,43 @@ bool SearchClient(string ID, vector<stData> Clients, stData& Client) {
     return false;
 }
 
+void AddNewClient(string ID) {
+    stData ClientData;
+    ClientData = FillClientData(ID);
+    ClientToFile(FileName, ConvertRecordToLine(ClientData));
+}
+void AddClients (vector<stData> Clients) {
+    stData Client;
+    char Answer = 'Y';
+    string ID = "";
+    do {
+        system("cls");
+        cout << "Enter the ID you want to add\n";
+        cin >> ID;
+        system ("cls");
+        if (!SearchClient(ID, Clients, Client)) {
+        cout << "Adding new clients : \n\n";
+        
+        AddNewClient(ID);
+
+        cout << "Added succefully!!\n";
+        }
+        else cout << "This ID is taken\n";
+        cout << "\nDo You Want to Add More Clients ? [y/n]  \n";
+        cin >> Answer;
+    } while (toupper(Answer) == 'Y');
+    cout << "\n All clients were added to the file [" << FileName << "]";
+}
+
+
 void PrintRecord (stData Data) {
+    cout << "\n-----------------------------------------\n";
     cout << "Account Numer : " << Data.AccountNumber << endl;
     cout << "PIN Code : " << Data.PINCode << endl;
     cout << "Name : " << Data.Name << endl;
     cout << "Phone : " << Data.Phone << endl;
     cout << "Account Balance : " << Data.AccountBalance << endl;
+    cout << "\n-----------------------------------------\n";
 }
 
 void MarkClientForDeletion(string ID, vector<stData> &Clients) {
@@ -196,7 +215,10 @@ void LoadVectorToFile(string FileName, vector<stData> Clients) {
     }
 }
 
-bool DeleteClientByID(vector<stData> &Clients, string ID) {
+bool DeleteClientByID(vector<stData> &Clients) {
+    string ID;
+    cout << "What ID do you want to delete? \n";
+    cin >> ID;
     char Answer = 'N';
     stData Client;
 
@@ -228,7 +250,10 @@ stData ChangeClientData(stData &Data) {
     return Data;
 }
 
-bool UpdateClientByID(vector<stData> &Clients, string ID) {
+bool UpdateClientByID(vector<stData> &Clients) {
+    string ID;
+    cout << "What ID do you want to update? \n";
+    cin >> ID;
     char Answer = 'N';
     stData Client;
 
@@ -257,78 +282,65 @@ bool UpdateClientByID(vector<stData> &Clients, string ID) {
         cout << "Client was not found!\n";
     }
 }
-void VersatileFunc(int n) {
+
+void PressToContinue() {
+            cout << "\nPress Enter To Continue...\n";
+            system("pause>0");
+            PrintMainMenu();
+}
+
+void FindClient(vector<stData> Clients) {
     string ID;
-    vector<stData> Vector = LoadFileToVector(FileName);
-    switch (n) {
-        case Delete: {
-            cout << "What ID do you want to delete? \n";
-            cin >> ID;
-            DeleteClientByID(Vector, ID);
-            break;
-        }
-        case Update: {
-            cout << "What ID do you want to update? \n";
-            cin >> ID;
-            UpdateClientByID(Vector, ID);
-            break;
-        }
-        case Find: {
-            cout << "Enter the ID you want to find";
-            cin >> ID;
-            stData Client;
-            if (SearchClient(ID, Vector, Client))
-            {
-            PrintRecord(Client);
-            }
+    cout << "Enter the ID you want to find? \n";
+    cin >> ID;
+    stData Client;
+    if (SearchClient(ID, Clients, Client)) {
+    PrintRecord(Client);
+    }
     else {
         cout << "This ID wasn't found\n";
     }
-        }
-        default: cout << "Miss!Miss!";
-    }
 }
-
-
-
 
 void Functions() {
     int Ans;
     cin >> Ans;
+    vector<stData> Clients = LoadFileToVector(FileName);
     
     switch(Ans) {
         case Show: {
             PrintClients(LoadFileToVector(FileName));
-            cout << "\nPress Enter To Continue...\n";
-            system("pause>0");
+            PressToContinue();
             break;
         }
         case Add: {
-            AddClients();
-            cout << "\nPress Enter To Continue...\n";
-            system("pause>0");
+            system("cls");
+            AddClients(Clients);
+            PressToContinue();
             break;
         }
         case Delete: {
-            VersatileFunc(Delete);
-            cout << "\nPress Enter To Continue...\n";
-            system("pause>0");
+            system("cls");
+            DeleteClientByID(Clients);
+            PressToContinue();
             break;
         }
         case Update: {
-            VersatileFunc(Update);
-            cout << "\nPress Enter To Continue...\n";
-            system("pause>0");
+            system("cls");
+            UpdateClientByID(Clients);
+            PressToContinue();
             break;
         }
         case Find: {
-            VersatileFunc(Find);
-            cout << "\nPress Enter To Continue...\n";
-            system("pause>0");
+            system("cls");
+            FindClient(Clients);
+            PressToContinue();
             break;
         }
         case Exit: {
-
+            system("cls");
+            cout << "\n HAVE A NICE DAY~! \n";
+            cout << "\n\n Exitting ... \n\n";
             break;
         }
         default: {
@@ -337,10 +349,7 @@ void Functions() {
     }
 }
 void StartBank() {
-
     PrintMainMenu();
-    Functions();
-
 }
 
 int main() {
