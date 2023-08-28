@@ -155,7 +155,8 @@ void AddNewClient(string ID) {
     ClientData = FillClientData(ID);
     ClientToFile(FileName, ConvertRecordToLine(ClientData));
 }
-void AddClients (vector<stData> Clients, stData Client) {
+void AddClients (vector<stData> Clients) {
+    stData Client;
     char Answer = 'Y';
     string ID = "";
     do {
@@ -209,7 +210,10 @@ void LoadVectorToFile(string FileName, vector<stData> Clients) {
     }
 }
 
-bool DeleteClientByID(vector<stData> &Clients, string ID) {
+bool DeleteClientByID(vector<stData> &Clients) {
+    string ID;
+    cout << "What ID do you want to delete? \n";
+    cin >> ID;
     char Answer = 'N';
     stData Client;
 
@@ -241,7 +245,10 @@ stData ChangeClientData(stData &Data) {
     return Data;
 }
 
-bool UpdateClientByID(vector<stData> &Clients, string ID) {
+bool UpdateClientByID(vector<stData> &Clients) {
+    string ID;
+    cout << "What ID do you want to update? \n";
+    cin >> ID;
     char Answer = 'N';
     stData Client;
 
@@ -270,50 +277,30 @@ bool UpdateClientByID(vector<stData> &Clients, string ID) {
         cout << "Client was not found!\n";
     }
 }
-void VersatileFunc(int n) {
-    string ID;
-    vector<stData> Vector = LoadFileToVector(FileName);
-    stData Client;
-    switch (n) {
-        case Add: {
-            AddClients(Vector, Client);
-            break;
-        }
-        case Delete: {
-            cout << "What ID do you want to delete? \n";
-            cin >> ID;
-            DeleteClientByID(Vector, ID);
-            break;
-        }
-        case Update: {
-            cout << "What ID do you want to update? \n";
-            cin >> ID;
-            UpdateClientByID(Vector, ID);
-            break;
-        }
-        case Find: {
-            cout << "Enter the ID you want to find? \n";
-            cin >> ID;
-            if (SearchClient(ID, Vector, Client)) {
-            PrintRecord(Client);
-            }
-            else {
-            cout << "This ID wasn't found\n";
-            }
-            break;
-        }
-        default: cout << "MissMiss\n";
-    }
-}
 
 void PressToContinue() {
             cout << "\nPress Enter To Continue...\n";
             system("pause>0");
 }
 
+void FindClient(vector<stData> Clients) {
+    string ID;
+    cout << "Enter the ID you want to find? \n";
+    cin >> ID;
+    stData Client;
+    if (SearchClient(ID, Clients, Client)) {
+    PrintRecord(Client);
+    }
+    else {
+        cout << "This ID wasn't found\n";
+    }
+}
+
 void Functions(int &still) {
     int Ans;
     cin >> Ans;
+    string ID;
+    vector<stData> Clients = LoadFileToVector(FileName);
     
     switch(Ans) {
         case Show: {
@@ -322,22 +309,22 @@ void Functions(int &still) {
             break;
         }
         case Add: {
-            VersatileFunc(Add);
+            AddClients(Clients);
             PressToContinue();
             break;
         }
         case Delete: {
-            VersatileFunc(Delete);
+            DeleteClientByID(Clients);
             PressToContinue();
             break;
         }
         case Update: {
-            VersatileFunc(Update);
+            UpdateClientByID(Clients);
             PressToContinue();
             break;
         }
         case Find: {
-            VersatileFunc(Find);
+            FindClient(Clients);
             PressToContinue();
             break;
         }
@@ -356,8 +343,8 @@ void StartBank() {
 
     int still;
     do {
-            PrintMainMenu();
-            Functions(still);
+        PrintMainMenu();
+        Functions(still);
     }
     while (still != Exit);
 }
